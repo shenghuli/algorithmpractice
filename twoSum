@@ -24,6 +24,7 @@ func main() {
 	fmt.Println(retArr)
 }
 
+//暴力实现
 func twoSum(nums []int, target int) []int {
     count := len(nums)
     var retArr []int
@@ -36,5 +37,24 @@ func twoSum(nums []int, target int) []int {
     	}
     }
 
-    return nil
+    return []int{}
+}
+
+//map实现
+func twoSum(nums []int, target int) []int {
+    var tmpDic = map[int]int{}
+	//构建字典
+	for i := 0; i < len(nums); i++ {
+		k := nums[i]
+		v := i
+		tmpDic[k] = v
+	}
+	//map查询
+	for i := 0; i < len(nums); i++ {
+		tk := target - nums[i]
+		if ti, ok := tmpDic[tk]; ok {
+			return []int{i, ti}
+		}
+	}
+	return []int{}
 }
