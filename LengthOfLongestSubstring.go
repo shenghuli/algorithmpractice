@@ -17,7 +17,7 @@
 package main
 
 func main() {
-str1 := "abcabcbb"
+	str1 := "abcabcbb"
 	len1 := LengthOfLongestSubstring(str1)
 	fmt.Println(len1)
 	str2 := "bbbbb"
