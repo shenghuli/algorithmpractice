@@ -29,30 +29,138 @@ func main() {
 }
 
 
-//LengthOfLongestSubstring 无重复字符的最长子串
-func LengthOfLongestSubstring(s string) int {
-	strLen := len(s)
-	maxSubLen := 0
-	maxSubLenOfI := 0
-	positionDic := map[byte]int{}
-	for i:=0;i<strLen;i++{
-		ch := s[i]
-		if index,ok := positionDic[ch];ok{
-			d := i - index
-			if d > maxSubLenOfI {
-				maxSubLenOfI++
-			}else {
-				maxSubLenOfI = d
+//解法1，优化版暴力解法,复杂度（n^3)
+func LongestPalindrome(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	for size := len(s); size > 0; size-- {
+		//寻找长度为size的回文
+		for low, high := 0, size-1; high < len(s); low, high = low+1, high+1 {
+			if isPalingdrome(s, low, high) {
+				return s[low : high+1]
 			}
-		}else{
-			maxSubLenOfI++;
-		}
-		positionDic[ch] = i
-		if maxSubLenOfI > maxSubLen {
-			maxSubLen = maxSubLenOfI
 		}
 	}
-	return maxSubLen
+	return s[0:1]
+}
+
+//解法2 LongestPalindromeCenter 中心扩散解法，复杂度(0^2)
+func LongestPalindromeCenter(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	var maxLen int = 0
+	var res string = ""
+	for i := 0; i < len(s)-1; i++ {
+		tMaxLen, tres := expandCheckPalindrom(s, i, i, maxLen)
+		if tMaxLen > maxLen {
+			maxLen = tMaxLen
+			res = tres
+		}
+		tMaxLen, tres = expandCheckPalindrom(s, i, i+1, maxLen)
+		if tMaxLen > maxLen {
+			maxLen = tMaxLen
+			res = tres
+		}
+	}
+	return res
+}
+
+//解法3，Manacher算法，复杂度O(n) https://www.jianshu.com/p/116aa58b7d81
+var specialChar = "#"
+
+func LongestPalindromeManacher(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	//构建插入特殊字符的字符串
+	mstr := ""
+	for i := 0; i < len(s); i++ {
+		mstr += specialChar + s[i:i+1]
+	}
+	mstr += specialChar
+
+	//初始变量
+	//C：对右回文右边界的对称中心
+	//R：最右回文右边界
+	//Radius：回文半径数组
+	C := -1
+	R := -1
+	Radius := make([]int, len(mstr))
+	//最大半径对应的C
+	maxC := 0
+	maxR := 0
+	for i := 0; i < len(Radius); i++ {
+		//-------- 计算Radius[i] begin
+		if R > i { //case 2，
+			//对称点 2*i-1
+			if Radius[2*C-i] < R-i+1 { //cL > pL
+				Radius[i] = Radius[2*C-i]
+			} else { //cL < pL,cL=pL 起始值
+				Radius[i] = R - i + 1
+			}
+		} else { //case 1,默认为1，起始值
+			Radius[i] = 1
+		}
+		//以上为起始值的case，下面计算至终止态
+		for i+Radius[i] < len(mstr) && i-Radius[i] > -1 {
+			if mstr[i-Radius[i]] == mstr[i+Radius[i]] {
+				Radius[i]++
+			} else {
+				break
+			}
+		}
+		//-------- 计算Radius[i] end
+		//更新R
+		if R < Radius[i]+i {
+			R = Radius[i] + i - 1
+			//更新C
+			C = i
+		}
+		//更新maxC
+		if maxR < Radius[i] {
+			maxR = Radius[i]
+			maxC = i
+		}
+	}
+	//输出起始值
+	start := (maxC - Radius[maxC] + 1) / 2
+	end := (maxC + Radius[maxC] - 1) / 2
+	return s[start:end]
+}
+
+//expandCheckPalindrom 从中心向两遍扩展，检查是否是回文
+func expandCheckPalindrom(s string, low, high, maxLen int) (retMaxLen int, res string) {
+	retMaxLen = maxLen
+	res = ""
+	for low >= 0 && high < len(s) {
+		if s[low] == s[high] {
+			if high-low+1 > maxLen {
+				retMaxLen = high - low + 1
+				res = s[low : high+1]
+			}
+			low--
+			high++
+		} else {
+			//不是回文，退出
+			return retMaxLen, res
+		}
+	}
+	return retMaxLen, res
+}
+
+//isPalingdrome 判断是否是回文
+func isPalingdrome(s string, low, high int) bool {
+	for low < high {
+		if s[low] == s[high] {
+			low++
+			high--
+		} else {
+			return false
+		}
+	}
+	return true
 }
 
 
