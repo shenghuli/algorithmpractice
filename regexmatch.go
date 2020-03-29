@@ -23,6 +23,7 @@ func main() {
   
 }
 
+//IsMatch 字符串是否匹配 ，剑指offer 第19道题解法
 func IsMatch(s string, p string) bool {
 	return matchCore(s, 0, p, 0)
 }
@@ -56,4 +57,88 @@ func matchCore(s string, sstart int, p string, pstart int) bool {
 		return matchCore(s, sstart+1, p, pstart+1)
 	}
 	return false
+}
+
+//网上解法
+//https://www.imooc.com/article/281353?block_id=tuijian_wz
+//IsMatchRecursive 递归
+func IsMatchRecursive(s string, p string) bool {
+	if len(p) == 0 { //pattern 匹配完了
+		if len(s) == 0 { //字符串也匹配完了
+			return true
+		} else { //字符串有剩余
+			return false
+		}
+	}
+	//朴素的是否匹配
+	isMatched := len(s) > 0 && (s[0] == p[0] || p[0] == '.')
+	if len(p) > 1 && p[1] == '*' {
+		return IsMatchRecursive(s, p[2:]) ||
+			isMatched && IsMatchRecursive(s[1:], p)
+	}
+	return isMatched && IsMatchRecursive(s[1:], p[1:])
+}
+
+//IsMatchDynamicUp 动态规划自上而下实现
+func IsMatchDynamicUp(s, p string) bool {
+	//构建状态空间
+	rows := len(s) + 1
+	cols := len(p) + 1
+	stageMatrix := make([][]int, rows)
+	for i := 0; i < rows; i++ {
+		stageMatrix[i] = make([]int, cols)
+	}
+	return getMatchedValue(0, 0, s, p, stageMatrix)
+}
+
+//获取状态矩阵的值，0：未初始化，-1：false,1:true
+func getMatchedValue(i, j int, s, p string, stagetMatrix [][]int) bool {
+	if stagetMatrix[i][j] == 1 {
+		return true
+	} else if stagetMatrix[i][j] == -1 {
+		return false
+	}
+
+	var answer bool
+	if j == len(p) {
+		answer = i == len(s)
+	} else {
+		curMatched := i < len(s) && (s[i] == p[j] || p[j] == '.')
+		if j+1 < len(p) && p[j+1] == '*' {
+			answer = getMatchedValue(i, j+2, s, p, stagetMatrix) ||
+				(curMatched && getMatchedValue(i+1, j, s, p, stagetMatrix))
+		} else {
+			answer = curMatched && getMatchedValue(i+1, j+1, s, p, stagetMatrix)
+		}
+	}
+
+	if answer == true {
+		stagetMatrix[i][j] = 1
+	} else {
+		stagetMatrix[i][j] = -1
+	}
+	return answer
+}
+
+//IsMatchDynamicUp 动态规划底向上实现
+func IsMatchDynamicDown(s, p string) bool {
+	//构建状态空间
+	rows := len(s) + 1
+	cols := len(p) + 1
+	stageMatrix := make([][]bool, rows)
+	for i := 0; i < rows; i++ {
+		stageMatrix[i] = make([]bool, cols)
+	}
+	stageMatrix[rows-1][cols-1] = true
+	for i := len(s); i >= 0; i-- {
+		for j := len(p) - 1; j >= 0; j-- {
+			isMatched := i < len(s) && (s[i] == p[j] || p[j] == '.')
+			if j+1 < len(p) && p[j+1] == '*' {
+				stageMatrix[i][j] = stageMatrix[i][j+2] || isMatched && stageMatrix[i+1][j]
+			} else {
+				stageMatrix[i][j] = isMatched && stageMatrix[i+1][j+1]
+			}
+		}
+	}
+	return stageMatrix[0][0]
 }
