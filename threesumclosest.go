@@ -83,4 +83,31 @@ func ThreeSumClosest1(nums []int, target int) int {
 	return retInt
 }
 
-
+//ThreeSumClosest 双指针解法
+func ThreeSumClosestDoublePointer(nums []int, target int) int {
+	if len(nums) < 3 { //不足3个
+		return 0
+	}
+	//对原数组排序
+	sort.Ints(nums)
+	result := nums[0] + nums[1] + nums[2]
+	for i := 0; i < len(nums)-2; i++ {
+		start := i + 1
+		end := len(nums) - 1
+		for start < end {
+			sum := nums[i] + nums[start] + nums[end]
+			distance := math.Abs(float64(sum - target))
+			if distance < math.Abs(float64(result-target)) {
+				result = sum
+			}
+			if sum-target > 0 {
+				end--
+			} else if sum-target < 0 {
+				start++
+			} else {
+				return result
+			}
+		}
+	}
+	return result
+}
