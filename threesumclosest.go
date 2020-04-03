@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-  //最接近的三数之和
+  	//最接近的三数之和
 	nums := []int{-1, 2, 1, -4}
 	nums := []int{-3, -2, -5, 3, -4}
 	target := -1
@@ -56,3 +56,31 @@ func ThreeSumClosest(nums []int, target int) int {
 	}
 	return closestNum
 }
+
+//ThreeSumClosest 三数之和,暴力解法2
+func ThreeSumClosest1(nums []int, target int) int {
+	if len(nums) < 3 {
+		return 0
+	}
+	//对原数组排序
+
+	distance := float64(MaxInt)
+	retInt := 0
+	for i := 0; i < len(nums)-2; i++ {
+		for j := i + 1; j < len(nums)-1; j++ {
+			for k := j + 1; k < len(nums); k++ {
+				sum := nums[i] + nums[j] + nums[k]
+				if sum-target == 0 {
+					return sum
+				}
+				if math.Abs(float64(sum-target)) < distance {
+					distance = math.Abs(float64(sum - target))
+					retInt = sum
+				}
+			}
+		}
+	}
+	return retInt
+}
+
+
