@@ -1,17 +1,18 @@
 package main
 
 func main() {
-  //删除排序链表中的重复元素
-	l1 := &deleteduplicates.ListNode{
+  	//删除排序链表中的重复元素
+	l1 := &ListNode{
 		Val: 1,
-		Next: &deleteduplicates.ListNode{
+		Next: &ListNode{
 			Val: 1,
-			Next: &deleteduplicates.ListNode{
+			Next: &ListNode{
 				Val:  2,
 				Next: nil,
 			},
 		},
 	}
+	
 	ToString(DeleteDuplicates(l1))
 }
 
