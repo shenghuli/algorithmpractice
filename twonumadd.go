@@ -76,6 +76,42 @@ func PrintListNode(l *ListNode) {
 	fmt.Print("\n")
 }
 
+//AddTwoNumbers 两数求和,马老师写法
+func AddTwoNumbers2(l1 *ListNode, l2 *ListNode) *ListNode {
+	result := &ListNode{}
+	l3 := result
+	flag := 0
+	for l1 != nil && l2 != nil {
+		sum := l1.Val + l2.Val + flag
+		l3.Next = &ListNode{Val: sum % 10}
+		flag = sum / 10
+		l1 = l1.Next
+		l2 = l2.Next
+		l3 = l3.Next
+	}
+	for l1 != nil {
+		sum := l1.Val + flag
+		l3.Next = &ListNode{Val: sum % 10}
+		flag = sum / 10
+		l1 = l1.Next
+		l3 = l3.Next
+	}
+	for l2 != nil {
+		sum := l2.Val + flag
+		l3.Next = &ListNode{Val: sum % 10}
+		flag = sum / 10
+		l2 = l2.Next
+		l3 = l3.Next
+	}
+
+	if flag == 1 {
+		l3.Next = &ListNode{Val: flag}
+	}
+
+	return result.Next
+}
+
+
 
 func main() {
 	Node3 := ListNode{
