@@ -44,6 +44,10 @@ func IsValid(s string) bool {
 		'}': -2,
 		']': -3,
 	}
+	//非偶数个字符，必定为false
+	if len(s)%2 != 0 {
+		return false
+	}
 	for i := 0; i < len(s); i++ {
 		if v, ok := dic[s[i]]; ok {
 			if v > 0 {
