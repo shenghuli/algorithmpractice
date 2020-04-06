@@ -163,4 +163,30 @@ func isPalingdrome(s string, low, high int) bool {
 }
 
 
+//状态转移数组，dp[l,r]表示s[l,r]是否构成了回文字符串
+//LongestPalindrome3 最长的回文子串，解法4，动态规划
+func LongestPalindrome3(s string) string {
+	if len(s) <= 1 {
+		return s
+	}
+	longestPalindromeLen := 1
+	longestPalindromeStr := s[:1]
+	//初始化状态转移表
+	dp := make([][]bool, len(s))
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
+	}
+	for r := 1; r < len(s); r++ {
+		for l := 0; l < r; l++ {
+			if (s[r] == s[l]) && (r-l <= 2 || dp[l+1][r-1] == true) {
+				dp[l][r] = true
+				if r-l+1 > longestPalindromeLen {
+					longestPalindromeLen = r - l + 1
+					longestPalindromeStr = s[l : r+1]
+				}
+			}
+		}
+	}
 
+	return longestPalindromeStr
+}
