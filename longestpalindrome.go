@@ -16,16 +16,15 @@
 
 package main
 
+import "fmt"
+
 func main() {
-	str1 := "abcabcbb"
-	len1 := LengthOfLongestSubstring(str1)
-	fmt.Println(len1)
-	str2 := "bbbbb"
-	len2 := LengthOfLongestSubstring(str2)
-	fmt.Println(len2)
-	str3 := "eeydgwdykpv"
-	len3 := LengthOfLongestSubstring(str3)
-	fmt.Println(len3)
+	//最长回文子串
+	str := "abcdcbafabcdck"
+	lstr := LongestPalindrome(str)
+	fmt.Println(lstr)
+	lstr := LongestPalindromeManacher(str)
+	fmt.Println(lstr)
 }
 
 
