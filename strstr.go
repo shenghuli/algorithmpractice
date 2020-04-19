@@ -6,7 +6,7 @@ import (
 
 func main(){
   //实现 strStr()
-	fmt.Println(strstr.StrStr("aaa", "aaaa"))
+	fmt.Println(StrStr("aaa", "aaaa"))
 }
 
 
